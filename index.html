@@ -382,6 +382,31 @@
             font-weight: 400;
         }
 
+        .chat-message.ai table,
+        .goal-tab-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+        .chat-message.ai th,
+        .goal-tab-content th {
+            background: #495057;
+            color: white;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .chat-message.ai td,
+        .goal-tab-content td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .chat-message.ai tr:hover td,
+        .goal-tab-content tr:hover td {
+            background: #f8f9fa;
+        }
+
         .chat-message.ai .task-list {
             background: #f8f9fa;
             border-radius: 8px;
@@ -537,6 +562,23 @@
         }
         .goal-tab-content {
             min-height: 60px;
+        }
+        .goal-print-btn {
+            margin-left: auto;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: #6c757d;
+            background: transparent;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            align-self: center;
+        }
+        .goal-print-btn:hover {
+            color: #212529;
+            background: #f8f9fa;
+            border-color: #adb5bd;
         }
         .goal-pagination {
             display: flex;
@@ -1066,6 +1108,26 @@
                 width: 100%;
             }
         }
+        @media print {
+            body * { visibility: hidden; }
+            #printPlanContainer, #printPlanContainer * { visibility: visible; }
+            #printPlanContainer {
+                position: absolute; left: 0; top: 0;
+                width: 100%; padding: 20px 30px; background: white;
+            }
+            #printPlanContainer h2 {
+                font-size: 18px; border-left: 4px solid #000;
+                padding-left: 12px; margin: 16px 0 8px 0;
+            }
+            #printPlanContainer h3 {
+                font-size: 15px; background: #f1f3f5;
+                padding: 8px 12px; border-radius: 4px; margin: 12px 0 6px 0;
+            }
+            #printPlanContainer p { margin: 8px 0; line-height: 1.6; font-size: 14px; }
+            #printPlanContainer ul, #printPlanContainer ol { margin: 8px 0; padding-left: 24px; }
+            #printPlanContainer li { margin: 6px 0; line-height: 1.5; font-size: 14px; }
+            @page { size: A4; margin: 20mm; }
+        }
     </style>
 </head>
 <body>
@@ -1211,11 +1273,13 @@
 - [具体任务1，含学习内容和预计时长]
 - [具体任务2，含学习内容和预计时长]
 - [具体任务3，含学习内容和预计时长]
+- 📺 今日辅助资源：[1-2个相关视频/教程/博主推荐，注明平台和搜索关键词]
 
 第2天
 - [具体任务1，含学习内容和预计时长]
 - [具体任务2，含学习内容和预计时长]
 - [具体任务3，含学习内容和预计时长]
+- 📺 今日辅助资源：[1-2个相关视频/教程/博主推荐，注明平台和搜索关键词]
 
 ...以此类推，直到整个学习周期结束。
 
@@ -1226,7 +1290,8 @@
 - 每天至少2项具体任务，每项任务有明确的学习内容和预估时间
 - 相邻两天的任务量和难度保持平稳递进，不得出现大幅跳跃
 - 超过30天的计划每7天设1天为"巩固日"，标题仍为"第N天"，任务为回顾前6天的核心知识点
-- 严禁在任务描述中引用其他天的编号（如"重复第3天"、"参考第1天"），如需回顾直接描述具体内容`;
+- 严禁在任务描述中引用其他天的编号（如"重复第3天"、"参考第1天"），如需回顾直接描述具体内容
+- 每天最后一项为辅助资源推荐，标注📺图标，结合当天学习内容推荐关联视频或博主（限你知识范围内的真实博主/课程）`;
 
 
         const DEFAULT_INTERVIEW_PROMPT = `你是专业的学习规划顾问。你的任务是与用户沟通学习需求，先提供方向性建议，再根据用户确认决定是否生成每日计划。
@@ -1254,7 +1319,23 @@
 [/个人概况]
 
 ## 学习方向建议
-（300-500字方向建议，包含阶段划分、核心目标、资源推荐、里程碑。只给大框架，严禁出现"第X天"或具体每日任务列表）
+（400-600字方向建议，必须包含以下四个板块：
+
+**阶段规划**：按时间拆分学习阶段，每阶段有明确的核心目标和预期成果。
+
+**核心资源推荐**：为每个阶段推荐具体的学习资源，要求：
+- 推荐2-4个抖音/B站/YouTube 优质博主（给出博主名+平台+讲解风格特点）
+- 推荐2-3门在线课程（含平台名称，如B站课程、Coursera、慕课网、网易公开课等）
+- 推荐相关的实操视频系列或免费教程，用表格展示以下信息：
+| 资源名称 | 平台 | 适合阶段 | 推荐理由 |
+|---------|------|---------|---------|
+| （示例） | （抖音/B站/慕课等） | （入门/进阶等） | （简短理由） |
+
+**里程碑节点**：设定可量化的阶段目标（如"完成XX项目""通过XX测试"）。
+
+**学习技巧**：针对该科目的高效学习方法和常见避坑建议。
+
+只给大框架，严禁出现"第X天"或具体每日任务列表，严禁编造不存在的博主或链接）
 
 [确认]
 以上是学习方向建议，是否需要我为你生成每天的具体学习计划？
@@ -1347,6 +1428,11 @@
                 appData.chatHistory = appData.chatHistory.slice(-20);
             }
             saveData();
+            // 有AI对话内容时就显示保存按钮
+            const saveBtn = document.getElementById('saveGoalBtn');
+            if (role === 'assistant') {
+                saveBtn.style.display = 'block';
+            }
         }
 
         function loadData() {
@@ -1382,18 +1468,10 @@
             document.getElementById('apiKey').value = savedKey || DEFAULT_API_KEY;
             document.getElementById('endpointId').value = savedEndpoint || DEFAULT_ENDPOINT_ID;
 
-            let prompts = {};
-            try {
-                const saved = localStorage.getItem('system_prompts');
-                if (saved) prompts = JSON.parse(saved);
-            } catch (e) {}
-
-            document.getElementById('interviewSystemPrompt').value =
-                prompts.interview || DEFAULT_INTERVIEW_PROMPT;
-            document.getElementById('planSystemPrompt').value =
-                prompts.plan || DEFAULT_PLAN_PROMPT;
-            document.getElementById('encourageSystemPrompt').value =
-                prompts.encourage || DEFAULT_ENCOURAGE_PROMPT;
+            // 始终使用最新的内置默认提示词，用户可在设置面板中自定义后保存
+            document.getElementById('interviewSystemPrompt').value = DEFAULT_INTERVIEW_PROMPT;
+            document.getElementById('planSystemPrompt').value = DEFAULT_PLAN_PROMPT;
+            document.getElementById('encourageSystemPrompt').value = DEFAULT_ENCOURAGE_PROMPT;
         }
 
         function getApiConfig() {
@@ -1473,7 +1551,22 @@
             html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
             html = html.replace(/^```(\w+)?\n([\s\S]*?)```$/gm, '<pre><code>$2</code></pre>');
             html = html.replace(/^```\n([\s\S]*?)```$/gm, '<pre><code>$1</code></pre>');
-            
+
+            // Markdown表格 → HTML表格
+            html = html.replace(/(?:^\|.+\|\n\|[-: |]+\|\n(?:^\|.+\|\n?)+)/gm, function(tableBlock) {
+                const rows = tableBlock.trim().split('\n').filter(r => !/^\|[-: |]+\|$/.test(r));
+                let tableHtml = '<table>';
+                for (let i = 0; i < rows.length; i++) {
+                    const cells = rows[i].split('|').filter(c => c.trim() !== '');
+                    const tag = i === 0 ? 'th' : 'td';
+                    tableHtml += '<tr>';
+                    cells.forEach(cell => { tableHtml += '<' + tag + '>' + cell.trim() + '</' + tag + '>'; });
+                    tableHtml += '</tr>';
+                }
+                tableHtml += '</table>';
+                return '\n' + tableHtml + '\n';
+            });
+
             const lines = html.split('\n');
             let result = '';
             let inList = false;
@@ -1510,10 +1603,10 @@
                     } else if (/^\s*---+\s*$/.test(line) || /^\s*===+\s*$/.test(line)) {
                         result += '<hr>';
                     } else if (line.trim()) {
-                        if (!line.startsWith('<h') && !line.startsWith('<pre') && !line.startsWith('<blockquote')) {
-                            result += '<p>' + line.trim() + '</p>';
-                        } else {
+                        if (line.startsWith('<')) {
                             result += line;
+                        } else {
+                            result += '<p>' + line.trim() + '</p>';
                         }
                     }
                 }
@@ -1589,7 +1682,7 @@
                     const plan = await callAI(query, apiKey, endpointId, (content) => {
                         rawPlanContent = content;
                         updateStreamingMessage(aiMsgDiv, content);
-                    }, getPlanSystemPrompt(), appData.chatHistory, '');
+                    }, getPlanSystemPrompt(), appData.chatHistory, '', 16000);
 
                     appData.planContent = plan;
                     appData.plan = { content: plan, createdAt: new Date().toISOString(), query: query };
@@ -1599,7 +1692,7 @@
                     saveData();
                     renderTasks();
                     renderCheckinStatus();
-                    document.getElementById('saveGoalBtn').style.display = 'inline-flex';
+                    document.getElementById('saveGoalBtn').style.display = 'block';
                     input.value = '';
                     showToast('计划生成成功');
                 } catch (error) {
@@ -1613,7 +1706,7 @@
                             saveData();
                             renderTasks();
                             renderCheckinStatus();
-                            document.getElementById('saveGoalBtn').style.display = 'inline-flex';
+                            document.getElementById('saveGoalBtn').style.display = 'block';
                         }
                         aiMsgDiv.innerHTML += '\n\n--- 生成已暂停 ---';
                     } else {
@@ -1721,7 +1814,7 @@
             }
         }
 
-        async function callAI(query, apiKey, endpointId, onStream, systemPrompt, chatHistory = [], existingContent = '') {
+        async function callAI(query, apiKey, endpointId, onStream, systemPrompt, chatHistory = [], existingContent = '', maxTokens = 4000) {
             if (!apiKey) {
                 throw new Error('请先在设置中填写 API Key');
             }
@@ -1771,7 +1864,7 @@
                         model: endpointId,
                         messages: messages,
                         temperature: 0.3,
-                        max_tokens: 2000,
+                        max_tokens: maxTokens,
                         stream: true
                     }),
                     signal: abortController.signal
@@ -2306,10 +2399,8 @@
         function renderGoal() {
             const goalArea = document.getElementById('goalArea');
             const saveBtn = document.getElementById('saveGoalBtn');
-            const aiMessages = appData.chatHistory.filter(msg => msg.role === 'assistant');
-            if (aiMessages.length > 0 || appData.planContent) {
-                saveBtn.style.display = 'inline-flex';
-            }
+            const hasContent = appData.chatHistory.some(msg => msg.role === 'assistant') || appData.planContent || appData.goal;
+            saveBtn.style.display = hasContent ? 'block' : 'none';
             if (!appData.goal) {
                 goalArea.innerHTML = '<div class="empty-state">暂无学习目标，请先生成学习计划后保存</div>';
                 return;
@@ -2358,6 +2449,9 @@
             for (const tab of tabs) {
                 html += '<button class="goal-tab' + (tab.id === goalTab ? ' active' : '') + '" onclick="switchGoalTab(\'' + tab.id + '\')">' + tab.label + '</button>';
             }
+            if (goalTab === 'plan' && planContent) {
+                html += '<button class="goal-print-btn" onclick="printPlan()" title="打印全部天数计划">打印</button>';
+            }
             html += '</div><div class="goal-tab-content">';
 
             const active = tabs.find(t => t.id === goalTab);
@@ -2390,6 +2484,25 @@
         function changeGoalPage(delta) {
             goalPage += delta;
             renderGoal();
+        }
+
+        function printPlan() {
+            let planContent = appData.goalPlan || '';
+            if (!planContent && appData.goal) {
+                const planIdx = appData.goal.search(/(?:^|\n)\s*第\s*1\s*天\s*\n/);
+                if (planIdx >= 0) planContent = appData.goal.substring(planIdx).trim();
+            }
+            if (!planContent) { showToast('没有可打印的学习计划'); return; }
+
+            const formatted = formatAIResponse(planContent);
+            const htmlContent = formatResponseForDisplay(formatted);
+
+            const container = document.createElement('div');
+            container.id = 'printPlanContainer';
+            container.innerHTML = htmlContent;
+            document.body.appendChild(container);
+            window.print();
+            document.body.removeChild(container);
         }
 
         function checkIn(dateStr) {
